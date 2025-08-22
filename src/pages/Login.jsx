@@ -22,7 +22,7 @@ export default function Login() {
         if (result.type === 'auth/login/fulfilled') {
             nav('/');
         } else {
-            setErr(result.payload || 'Email atau password salah.');
+            setErr('Invalid email or password');
             setModalOpen(true);
         }
         } catch (err) {

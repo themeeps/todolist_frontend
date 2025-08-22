@@ -18,11 +18,21 @@ api.interceptors.request.use(config => {
 
 api.interceptors.response.use(
   res => res,
-  err => {
-    if (err.response && err.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      if (onSessionExpired) onSessionExpired();
+   err => {
+    if (err.response) {
+      const { status, data } = err.response;
+
+      // Salah password / login gagal
+      if (status === 422 && data.message === "Invalid email or password") {
+        return Promise.reject(new Error("Invalid credentials"));
+      }
+
+      // Session timeout
+      if (status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if (onSessionExpired) onSessionExpired();
+      }
     }
     return Promise.reject(err);
   }
