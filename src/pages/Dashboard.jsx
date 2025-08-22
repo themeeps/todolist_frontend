@@ -84,6 +84,19 @@ export default function Dashboard() {
 
     useEffect(() => { fetchProjects(); }, []);
 
+    useEffect(() => {
+    if (projects.length > 0 && !selProject) {
+        setSelProject(projects[0]);
+        fetchTasks(projects[0].id);
+    }
+    }, [projects, selProject]);
+
+    
+    const onSelect = (p) => {
+        setSelProject(p);
+        fetchTasks(p.id);
+    };
+    
     const fetchProjects = async () => {
         const res = await api.get('/projects');
         setProjects(res.data.data ?? res.data);
@@ -92,11 +105,6 @@ export default function Dashboard() {
     const fetchTasks = async (projectId) => {
         const res = await api.get('/tasks', { params: { project_id: projectId } });
         setTasks(res.data.data ?? res.data);
-    };
-
-    const onSelect = (p) => {
-        setSelProject(p);
-        fetchTasks(p.id);
     };
 
     const logout = async () => {
